@@ -19,12 +19,18 @@ class FaceDetector(object):
             return frame
         for box, prob, ld in zip(boxes, probs, landmarks):
                 # Draw rectangle on frame
-            img = cv2.resize(self.image, (int(box[2])-int(box[0]), int(box[3])-int(box[1])))
-            frame[int(box[1]):int(box[3]), int(box[0]):int(box[2])] = img
+            x1 = max(0,int(box[0]))
+            y1 = max(0,int(box[1]))
+            x2 = min(int(box[2]),frame.shape[1])
+            y2 = min(int(box[3]),frame.shape[0])
+            img = cv2.resize(self.image, (x2-x1, y2-y1))
+            print(frame.shape)
+            frame[y1:y2, x1:x2] = img
             # cv2.rectangle(frame,
               #            (int(box[0]), int(box[1])),
             #           (int(box[2]), int(box[3])),
              #             (0, 0, 255),2)
+            print(frame.shape)
         return frame
 
     def run(self):
