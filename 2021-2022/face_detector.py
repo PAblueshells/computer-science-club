@@ -1,5 +1,4 @@
 import cv2
-import torch
 import numpy as np
 from facenet_pytorch import MTCNN
 
@@ -8,8 +7,9 @@ class FaceDetector(object):
     Face detector class
     """
 
-    def __init__(self, mtcnn):
+    def __init__(self, mtcnn, path):
         self.mtcnn = mtcnn
+        self.image = cv2.imread(path)
 
     def _draw(self, frame, boxes, probs, landmarks):
         """
@@ -19,10 +19,12 @@ class FaceDetector(object):
             return frame
         for box, prob, ld in zip(boxes, probs, landmarks):
                 # Draw rectangle on frame
-            cv2.rectangle(frame,
-                          (int(box[0]), int(box[1])),
-                          (int(box[2]), int(box[3])),
-                          (0, 0, 255),2)
+            img = cv2.resize(self.image, (int(box[2])-int(box[0]), int(box[3])-int(box[1])))
+            frame[int(box[1]):int(box[3]), int(box[0]):int(box[2])] = img
+            # cv2.rectangle(frame,
+              #            (int(box[0]), int(box[1])),
+            #           (int(box[2]), int(box[3])),
+             #             (0, 0, 255),2)
         return frame
 
     def run(self):
@@ -51,5 +53,5 @@ class FaceDetector(object):
         
 # Run the app
 mtcnn = MTCNN()
-fcd = FaceDetector(mtcnn)
+fcd = FaceDetector(mtcnn, 'bunny.png')
 fcd.run()
